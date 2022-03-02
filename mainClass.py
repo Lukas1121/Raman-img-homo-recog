@@ -10,11 +10,33 @@ sys.path.append("External_Functions")
 from ExternalFunctions import nice_string_output, add_text_to_ax
 
 class Main:
-    def __init__(self,files,boundaries=(5,130)):
-        self.files = files
+    def __init__(self,path,patch_scan_size=3,binary=True):
+        self.files = self.package_img_to_array(path)
+        # self.files = self.files[95:105]
         self.rem_outliers = None
         self.plot = None
-        self.boundaries = boundaries
+        self.patch_scan_size = patch_scan_size
+        self.boundaries = [0,0]
+
+    def loop_boundaries(self):
+        for i in range(len(self.files)):
+            self.define_boundaries(img=i)
+
+    def define_boundaries(self,img=int):
+        h, w = self.files[img].shape
+        if h < w:
+            residuals = (h%self.patch_scan_size)
+            self.boundaries[1] = round(w/self.patch_scan_size-residuals)
+        else:
+            residuals = (w%self.patch_scan_size)
+            self.boundaries[1] = round(h/self.patch_scan_size-residuals)
+        return self.boundaries
+
+    def package_img_to_array(self,path):
+        files = []
+        for f in glob.glob(path + "/*"):
+            files.append(cv2.cvtColor(cv2.imread(f),cv2.COLOR_BGR2GRAY)/255)
+        return files
 
     def average_pixels(self,img):
         print(np.average(img))
@@ -72,12 +94,13 @@ class Main:
         plt.show()
 
     def average_voxels(self,img=int,show_img=False):
+        self.boundaries = self.define_boundaries(img=img)
         vox_avg = []
         temp = []
-        for n in range(self.boundaries[0],self.boundaries[1]):
+        for n in range(self.boundaries[0],self.boundaries[1]-self.patch_scan_size):
             temp.clear()
-            for (i) in range((1+(3*(n-1))),(3*n)):
-                for j in range((1+(3*(n-1))),(3*n)):
+            for (i) in range((1+(self.patch_scan_size*(n-1))),(self.patch_scan_size*n)):
+                for j in range((1+(self.patch_scan_size*(n-1))),(self.patch_scan_size*n)):
                     temp.append(self.files[img][i,j])
                 vox_avg.append(sum(temp)/len(temp))
         if self.plot:
