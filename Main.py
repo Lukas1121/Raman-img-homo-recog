@@ -9,10 +9,12 @@ path_PEA = "C:\\Users\lukas\PycharmProjects\Raman-img-homo-recog\PEA\img"
 
 # obj = _.Main(path_hery)
 # obj_PEA = PEA.PEA(path_PEA)
-obj_test = test.Main(path=path_PEA)
+obj_test = test.Main(path=path_PEA,kernel=(5,5))
 obj_test.get_img_shape(img=3)
 # img = obj_test.show_img(img=3)
-vox_avg = obj_test.average_kernels(img=3)
+obj_test.find_countours(img=3)
+
+
 
 
 

@@ -30,23 +30,57 @@ class Main:
         return (h,w,c)
 
     def crop_img(self,img=int):
-        self.files[img] = self.files[img][0:-(60),(60):-1]
+        self.files[img] = self.files[img][0:-(25),(25):-1]
+        return self.files[img]
+
+    def find_countours(self,img=int):
+        gray_img = cv2.cvtColor(self.files[img],cv2.COLOR_BGR2GRAY)
+        # cv2.imshow("gray image",gray_img)
+        blur = cv2.GaussianBlur(gray_img,(5,5),cv2.BORDER_DEFAULT)
+        # cv2.imshow("blurred",blur)
+        canny = cv2.Canny(blur,100,175)
+        # cv2.imshow("Canny image",canny)
+
+        contours, _ = cv2.findContours(canny,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+        # cv2.waitKey(0)
+        return contours
+
+    def plot_contours(self,contours,img=int):
+        plt.figure()
+        plt.plot(contours[:][0],contours[:][1])
+
+
+
+"""
 
     def average_kernels(self,img=int):
-        vox_avg = []
+        B_vox_avg = []
         R_vox_avg = []
         G_vox_avg = []
         n = 0
         temp = []
         while True:
             n += 1
-            if n == 10:
-                return vox_avg
-            for j in range(len(self.files[img][0][:])):
+            if self.kernel[0]*(n) >= len(self.files[img]):
+                return (B_vox_avg,R_vox_avg,G_vox_avg)
+            for _ in range(len(self.files[img])-1):
                 temp.clear()
-                for i in range(self.kernel[0]*n):
-                    temp.append(self.files[img][i][j][:])
-                vox_avg.append(temp)
+                for i in range((self.kernel[0]*(n-1)),self.kernel[0]*n):
+                    for j in range((self.kernel[0]*(n-1)),self.kernel[0]*n):
+                        temp.append(self.files[img][i][j])
+                print(temp)
+                B_vox_avg.append(sum(temp[:][0])/len(temp[:][0]))
+                R_vox_avg.append(sum(temp[:][1])/len(temp[:][1]))
+                G_vox_avg.append(sum(temp[:][2]) / len(temp[:][2]))
 
+    def average_with_c_function(self,lst):
+        average = []
+        for i in range(len(lst)):
+            for j in range(len(lst[i])):
+                average[i][0].append(sum(lst[i][j][0])/len(lst[i][j]))
+                average[i][1].append(sum(lst[i][j][1]) / len(lst[i][j]))
+                average[i][2].append(sum(lst[i][j][2]) / len(lst[i][j]))
+        return average
 
+"""
 
