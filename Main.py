@@ -1,5 +1,8 @@
 import cv2
 import glob
+
+import matplotlib.pyplot as plt
+
 import mainClass as _
 import test as test
 import PEAClass as PEA
@@ -12,8 +15,9 @@ path_PEA = "C:\\Users\lukas\PycharmProjects\Raman-img-homo-recog\PEA\img"
 obj_test = test.Main(path=path_PEA,kernel=(5,5))
 obj_test.get_img_shape(img=3)
 # img = obj_test.show_img(img=3)
-obj_test.find_countours(img=3)
+contours = obj_test.find_countours(img=3)
 
+for i in range(len(contours)):
 
 
 

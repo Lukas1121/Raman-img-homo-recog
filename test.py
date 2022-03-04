@@ -36,9 +36,9 @@ class Main:
     def find_countours(self,img=int):
         gray_img = cv2.cvtColor(self.files[img],cv2.COLOR_BGR2GRAY)
         # cv2.imshow("gray image",gray_img)
-        blur = cv2.GaussianBlur(gray_img,(5,5),cv2.BORDER_DEFAULT)
+        blur = cv2.medianBlur(gray_img,7)
         # cv2.imshow("blurred",blur)
-        canny = cv2.Canny(blur,100,175)
+        canny = cv2.Canny(blur,125,175)
         # cv2.imshow("Canny image",canny)
 
         contours, _ = cv2.findContours(canny,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
