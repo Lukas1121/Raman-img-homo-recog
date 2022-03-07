@@ -38,16 +38,30 @@ class Main:
         # cv2.imshow("gray image",gray_img)
         blur = cv2.medianBlur(gray_img,7)
         # cv2.imshow("blurred",blur)
-        canny = cv2.Canny(blur,125,175)
+        canny = cv2.Canny(blur,100,150)
         # cv2.imshow("Canny image",canny)
-
-        contours, _ = cv2.findContours(canny,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+        contours, _ = cv2.findContours(canny,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
+        # cv2.imshow("Original image untreated", self.files[img])
+        img0 = cv2.drawContours(self.files[img], contours, -1, (0, 0, 0), 2)
+        # cv2.imshow("Original img w/ contours",img0)
         # cv2.waitKey(0)
-        return contours
+        return contours,self.files[img]
 
-    def plot_contours(self,contours,img=int):
-        plt.figure()
-        plt.plot(contours[:][0],contours[:][1])
+    def contour_to_A(self,contours):
+        A_list = []
+        max_idx = []
+        for i in range(len(contours)):
+            A_list.append(cv2.contourArea(contours[i]))
+        for i in range(5):
+            idx = [i for i, x in enumerate(A_list) if x == max(A_list)]
+            max_idx.append(idx)
+            A_list.pop(idx[0])
+        return A_list,np.array(max_idx).ravel()
+
+    def mark_ROI_from_contour_A(self,A_list,idx):
+        pass
+
+
 
 
 
