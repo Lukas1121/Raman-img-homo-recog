@@ -8,7 +8,7 @@ import test as test
 import PEAClass as PEA
 
 path_hery = "C:\\Users\lukas\PycharmProjects\Raman-img-homo-recog\Raman\Visible"
-path_PEA = "C:\\Users\lukas\PycharmProjects\Raman-img-homo-recog\PEA\img"
+path_PEA = "C:\\Users\Lukas\Documents\Master Thesis\Raman-img-homo-recog\PEA\img"
 
 # obj = _.Main(path_hery)
 # obj_PEA = PEA.PEA(path_PEA)
@@ -17,19 +17,16 @@ obj_test = test.Main(path=path_PEA,kernel=(5,5))
 # img = obj_test.show_img(img=3)
 contours,img = obj_test.find_countours(img=3)
 
-A_list,max_idx = obj_test.contour_to_A(contours)
+max_list,max_idx = obj_test.contour_to_A(contours)
 
-print(max_idx)
+cnt = contours[max_idx[3]]
 
-
-# cnt = contours[max_idx[0]]
-#
-# rect = cv2.minAreaRect(cnt)
-# box = cv2.boxPoints(rect)
-# box = np.int0(box)
-# img_rect = cv2.drawContours(img,[box],0,(0,0,0),-1)
-# cv2.imshow("testing",img_rect)
-# cv2.waitKey(0)
+rect = cv2.minAreaRect(cnt)
+box = np.int0(cv2.boxPoints(rect))
+print(box)
+img_rect = cv2.drawContours(img,[box],0,(0,0,255),-1)
+cv2.imshow("testing",img_rect)
+cv2.waitKey(0)
 
 
 

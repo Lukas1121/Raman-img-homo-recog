@@ -50,13 +50,15 @@ class Main:
     def contour_to_A(self,contours):
         A_list = []
         max_idx = []
+        max_list = []
         for i in range(len(contours)):
             A_list.append(cv2.contourArea(contours[i]))
         for i in range(5):
             idx = [i for i, x in enumerate(A_list) if x == max(A_list)]
             max_idx.append(idx)
+            max_list.append(A_list[idx[0]])
             A_list.pop(idx[0])
-        return A_list,np.array(max_idx).ravel()
+        return max_list,np.array(max_idx).ravel()
 
     def mark_ROI_from_contour_A(self,A_list,idx):
         pass
