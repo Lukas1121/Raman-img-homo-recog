@@ -38,32 +38,66 @@ class Main:
         # cv2.imshow("gray image",gray_img)
         blur = cv2.medianBlur(gray_img,7)
         # cv2.imshow("blurred",blur)
-        canny = cv2.Canny(blur,100,150)
+        canny = cv2.Canny(blur,0,125)
         # cv2.imshow("Canny image",canny)
         contours, _ = cv2.findContours(canny,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
         # cv2.imshow("Original image untreated", self.files[img])
-        img0 = cv2.drawContours(self.files[img], contours, -1, (0, 0, 0), 2)
+        # img0 = cv2.drawContours(self.files[img], contours, -1, (0, 0, 0), 1)
         # cv2.imshow("Original img w/ contours",img0)
         # cv2.waitKey(0)
         return contours,self.files[img]
 
-    def contour_to_A(self,contours):
+    def contour_to_A(self,contours,max_idx_range=5):
         A_list = []
         max_idx = []
         max_list = []
         for i in range(len(contours)):
             A_list.append(cv2.contourArea(contours[i]))
-        for i in range(5):
+        for i in range(max_idx_range):
             idx = [i for i, x in enumerate(A_list) if x == max(A_list)]
             max_idx.append(idx)
             max_list.append(A_list[idx[0]])
             A_list.pop(idx[0])
         return max_list,np.array(max_idx).ravel()
 
-    def mark_ROI_from_contour_A(self,A_list,idx):
-        pass
+    def contour_to_L(self,contours,max_idx_range=5):
+        A_list = []
+        max_idx = []
+        max_list = []
+        for i in range(len(contours)):
+            A_list.append(cv2.arcLength(contours[i],True))
+        for i in range(max_idx_range):
+            idx = [i for i, x in enumerate(A_list) if x == max(A_list)]
+            max_idx.append(idx)
+            max_list.append(A_list[idx[0]])
+            A_list.pop(idx[0])
+        return max_list, np.array(max_idx).ravel()
 
 
+    def mark_ROI_from_contour_A(self,contours,idx_list,img=int):
+        img0 = np.copy(self.files[img])
+        for i in range(len(idx_list)):
+            print(contours[idx_list[i]])
+            cnt = contours[idx_list[i]]
+            rect = cv2.minAreaRect(cnt)
+            box = np.int0(cv2.boxPoints(rect))
+            new_img = cv2.drawContours(img0,[box],0,(0,0,255),2)
+        stacked_img = np.concatenate((self.files[img],new_img),axis=1)
+        cv2.imshow("Original PEA left, ROI detected right",stacked_img)
+        return stacked_img
+
+    def loop_through_all_img(self,max_idx_range=10,save_img=False,use_L_or_A=int):
+        for i in range(len(self.files)):
+            print(i)
+            contours, img = self.find_countours(img=i)
+            if use_L_or_A == 1:
+                max_list, max_idx = self.contour_to_L(contours, max_idx_range)
+            if use_L_or_A == 2:
+                max_list, max_idx = self.contour_to_A(contours, max_idx_range)
+            stacked_img = self.mark_ROI_from_contour_A(contours, max_idx, img=i)
+            if save_img:
+                cv2.imwrite(("PEA/treated/treated_img_%s" % i + ".png"), stacked_img)
+            cv2.waitKey(0)
 
 
 
