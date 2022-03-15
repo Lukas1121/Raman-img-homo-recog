@@ -9,7 +9,7 @@ import sys
 sys.path.append("External_Functions")
 from ExternalFunctions import nice_string_output, add_text_to_ax
 
-class Main:
+class PEAClass:
     def __init__(self,path,kernel = 3):
         self.files = self.unpack_files(path)
         self.kernel = kernel
@@ -33,18 +33,19 @@ class Main:
         self.files[img] = self.files[img][0:-(25),(25):-1]
         return self.files[img]
 
-    def find_countours(self,img=int):
+    def find_countours(self,img=int,show_img=False):
         gray_img = cv2.cvtColor(self.files[img],cv2.COLOR_BGR2GRAY)
-        # cv2.imshow("gray image",gray_img)
         blur = cv2.medianBlur(gray_img,5)
-        # cv2.imshow("blurred",blur)
         canny = cv2.Canny(blur,0,150)
-        # cv2.imshow("Canny image",canny)
         contours, _ = cv2.findContours(canny,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
         # cv2.imshow("Original image untreated", self.files[img])
         # img0 = cv2.drawContours(self.files[img], contours, -1, (0, 0, 0), 1)
         # cv2.imshow("Original img w/ contours",img0)
-        # cv2.waitKey(0)
+        if show_img:
+            cv2.imshow("gray image", gray_img)
+            cv2.imshow("blurred", blur)
+            cv2.imshow("Canny image", canny)
+            cv2.waitKey(0)
         return contours,self.files[img]
 
     def contour_to_A(self,contours,max_idx_range=5):

@@ -9,21 +9,21 @@ import PEAClass as PEA
 
 path_hery = "C:\\Users\lukas\PycharmProjects\Raman-img-homo-recog\Raman\Visible"
 path_PEA = "C:\\Users\lukas\PycharmProjects\Raman-img-homo-recog\PEA\img"
+path_hery_raw = "C:\\Users\lukas\PycharmProjects\Raman-img-homo-recog\Raman\Herys Tirf"
 
-obj_hery = avg.PixelAvg(path_hery,
-                         kernel=3)
+obj_hery = avg.PixelAvg(path_hery_raw,
+                         kernel=7)
+avg, patch_idx = obj_hery.avg_by_kernel(10)
+obj_hery.hist_plot(avg,5)
 
-obj_hery.main_init(img=10,
-                   plot_defects=True,
-                   plot_distribution=True)
+# idx_list = obj_hery.max_avg_values(avg)
+#
+# obj_hery.plot_ROI(avg,patch_idx,10,enlarge_rect=2)
 
-# obj_PEA = PEA.Main(path=path_PEA,kernel=(5,5))
-# obj_PEA.loop_through_all_img(use_L_or_A="L")
-# contours = obj_PEA.find_countours(img=3)
-# obj_Hery.show_img(img=7)
-# obj_Hery.loop_through_all_img(use_L_or_A="A",max_idx_range=5)
-# contours = obj_Hery.find_countours(img=10)
-# obj_Hery.loop_through_all_img(use_L_or_A="A")
+# obj_hery.main_init(img=10,
+#                    plot_defects=True,
+#                    plot_distribution=True)
+
 
 
 
