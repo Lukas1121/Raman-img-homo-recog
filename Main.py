@@ -1,8 +1,4 @@
-import cv2
-import glob
-import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
+import animation as anim
 import mainClass as _
 import avg_by_kernel as avg
 import PEAClass as PEA
@@ -13,8 +9,13 @@ path_hery_raw = "C:\\Users\lukas\PycharmProjects\Raman-img-homo-recog\Raman\Hery
 
 obj_hery = avg.PixelAvg(path_hery_raw,
                          kernel=7)
+
 avg, patch_idx = obj_hery.avg_by_kernel(10)
-obj_hery.hist_plot(avg,5)
+print(len(patch_idx))
+# vid_obj = anim.Video()
+
+
+
 
 # idx_list = obj_hery.max_avg_values(avg)
 #

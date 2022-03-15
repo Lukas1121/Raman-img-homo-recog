@@ -52,7 +52,7 @@ class PixelAvg:
         temp_idx = []
         avg = []
         patch_idx = []
-        for i in range(int(self.img_search_range(img=img))-1):
+        for i in range(int(self.img_search_range(img=img))):
             temp.clear()
             temp_idx.clear()
             for j in range(self.kernel*i,self.kernel*(i+1)):
@@ -65,8 +65,8 @@ class PixelAvg:
 
     def max_avg_values(self,avg,n=5): #this is for getting the correct indeces of the averages to be used to get the indeces that draw the rectangles from patch_idx
         copied_avg = self.remove_outliers(avg,np.std(avg),np.mean(avg))
-        idx_list = np.argpartition(copied_avg, -n)[-n:]
-        return idx_list
+        idx_list = np.argpartition(copied_avg, n)
+        return idx_list[:n]
 
     def remove_outliers(self,lst,sigma,mu): #removes avg values 3 sigma away from mean
         idx_list = []
