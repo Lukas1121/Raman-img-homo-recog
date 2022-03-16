@@ -1,29 +1,12 @@
-import animation as anim
-import mainClass as _
-import avg_by_kernel as avg
-import PEAClass as PEA
+from bin import mainClass
 
 path_hery = "C:\\Users\lukas\PycharmProjects\Raman-img-homo-recog\Raman\Visible"
-path_PEA = "C:\\Users\lukas\PycharmProjects\Raman-img-homo-recog\PEA\img"
+path_PEA = "C:\\Users\lukas\PycharmProjects\Raman-img-homo-recog\data\PEA\img"
 path_hery_raw = "C:\\Users\lukas\PycharmProjects\Raman-img-homo-recog\Raman\Herys Tirf"
 
-obj_hery = avg.PixelAvg(path_hery_raw,
-                         kernel=7)
+obj = mainClass.Main(path_hery_raw)
 
-avg, patch_idx = obj_hery.avg_by_kernel(10)
-print(len(patch_idx))
-# vid_obj = anim.Video()
-
-
-
-
-# idx_list = obj_hery.max_avg_values(avg)
-#
-# obj_hery.plot_ROI(avg,patch_idx,10,enlarge_rect=2)
-
-# obj_hery.main_init(img=10,
-#                    plot_defects=True,
-#                    plot_distribution=True)
+obj.extract_all_img_homogeneity(rem_outliers=True)
 
 
 

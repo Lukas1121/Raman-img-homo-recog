@@ -6,7 +6,7 @@ from scipy import stats
 import os
 import glob
 import sys
-sys.path.append("External_Functions")
+sys.path.append("bin/External_Functions")
 from ExternalFunctions import nice_string_output, add_text_to_ax
 
 class Main:
