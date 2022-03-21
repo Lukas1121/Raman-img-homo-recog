@@ -158,7 +158,7 @@ class Main:
         for n in range(self.boundaries[0],self.boundaries[1]-self.patch_scan_size):
             temp.clear()
             for (i) in range((1+(self.patch_scan_size*(n-1))),(self.patch_scan_size*n)):
-                for j in range((1+(self.patch_scan_size*(n-1))),(self.patch_scan_size*n)):
+                for j in range((1+(self.patch_scan_size*(n-1))),(self.patch_scan_size*n-1)):
                     temp.append(self.files[img][i,j])
                 vox_avg.append(sum(temp)/len(temp))
         if self.plot:

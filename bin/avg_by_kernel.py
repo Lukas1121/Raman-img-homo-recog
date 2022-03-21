@@ -6,14 +6,14 @@ from scipy import stats
 import os
 import glob
 import sys
-sys.path.append("External_Functions")
+sys.path.append("bin")
 from ExternalFunctions import nice_string_output, add_text_to_ax
+
 
 class PixelAvg:
     def __init__(self,path,kernel=3):
         self.kernel = kernel
         self.files,self.filenames = self.unpack_files(path)
-
 
     def unpack_files(self,path):
         files = []
@@ -123,57 +123,54 @@ class PixelAvg:
         fig.tight_layout()
         plt.show()
 
-
     def min_max(self,lst):
         idx_max = np.argmax(lst)
         idx_min = np.argmin(lst)
         return (idx_min,idx_max)
 
-    def plot_min_max_kernel_avg(self,avg,img=int):
-        idx_min, idx_max = self.min_max(lst=avg)
-        fig, ax = plt.subplots()
+    def min_max_idx(self,arr,std_list):
+        temp = []
+        idx_min = np.argmin(std_list, axis=0)
+        idx_max = np.argmax(std_list, axis=0)
+        fig, axes = plt.subplots(nrows=2, ncols=2)
 
-        ax.imshow(self.files[img])
+        axes[0][1].hist(arr[idx_min][:],bins=30) #plotting histogram
+        axes[0][1].plot(arr[idx_min][:],
+                        stats.norm.pdf(arr[idx_min][:],np.mean(arr[idx_min][:]),np.std(arr[idx_min][:])),
+                        c="r") #plotting norm pdf
+        # axes[0][1].set_xlim(0.3,0.9)
+        axes[0][0].imshow(self.files[idx_min],cmap="gray",vmin=0,vmax=1)
+        axes[0][0].set_title("homoegenoust")
 
+        d_min = {"mean": np.mean(arr[idx_min][:]),
+             "std": np.std(arr[idx_min][:])}
+        d_max = {"mean": np.mean(arr[idx_max][:]),
+                 "std": np.std(arr[idx_max][:])}
 
+        text1 = nice_string_output(d_min, extra_spacing=2, decimals=3)
+        text2 = nice_string_output(d_max, extra_spacing=2, decimals=3)
+        add_text_to_ax(0.02, 0.97, text1, axes[0][1], fontsize=12)
+        add_text_to_ax(0.02, 0.97, text2, axes[1][1], fontsize=12)
 
-        """ This needs some fixing up since the idx's er for the locations in a reduced list, their indices therefor do not reflect that of the images 
-        
-        NEEDS SOLUTION
-        
-        
-        rect0 = patches.Rectangle((idx_min, idx_min), 25, 25, linewidth=2, edgecolor='b', facecolor='none',
-                                  label="min voxel avg.")
-        rect1 = patches.Rectangle((idx_max, idx_max), 25, 25, linewidth=2, edgecolor='r', facecolor='none',
-                                  label="max voxel avg.")
-
-        ax.add_patch(rect0)
-        ax.add_patch(rect1)
-
-        plt.legend()
-        """
+        axes[1][1].hist(arr[idx_max][:], bins=30)
+        axes[1][1].plot(arr[idx_max][:],
+                        stats.norm.pdf(arr[idx_max][:], np.mean(arr[idx_max][:]),np.std(arr[idx_max][:])),
+                        c="r")
+        axes[1][0].imshow(self.files[idx_max],cmap="gray",vmin=0,vmax=1)
+        axes[1][0].set_title("inhomogenoust")
 
         fig.tight_layout()
         plt.show()
 
-    def main_init(self,img=int,plot_distribution=True,plot_defects=True):
-        avg = self.avg_by_kernel(img=img)
-        if plot_distribution:
-            self.hist_plot(avg,img=img)
-        if plot_defects:
-            self.plot_min_max_kernel_avg(avg,img=img)
+    def average_all_files(self):
+        arr = []
+        std_list = []
+        for i in range(len(self.files)):
+            avg, _ = self.avg_by_kernel(i)
+            arr.append(avg)
+            std_list.append(np.std(avg))
+        print(std_list)
+        self.min_max_idx(arr,std_list)
+        return arr
 
 
-
-"""
-DUMP
-
-    def edge_detect_scale(self,img=int):
-        true_pixel_value = self.files[img]*255
-        blur = cv2.GaussianBlur(true_pixel_value,(13,13),0).astype("uint8")
-        # blur = cv2.medianBlur(self.files[img],3)
-        canny = cv2.Canny(blur,0,150)
-        cv2.imshow("%s"%self.filenames[img],canny)
-        cv2.waitKey(0)
-
-"""

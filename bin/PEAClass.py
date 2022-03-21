@@ -11,14 +11,16 @@ from ExternalFunctions import nice_string_output, add_text_to_ax
 
 class PEAClass:
     def __init__(self,path,kernel = 3):
-        self.files = self.unpack_files(path)
+        self.files,self.filenames = self.unpack_files(path)
         self.kernel = kernel
 
     def unpack_files(self, path):
         files = []
+        filenames = []
         for f in glob.glob(path + "/*"):
             files.append(cv2.imread(f)[0:-(60),(60):-1])
-        return files
+            filenames.append(os.path.basename(f))
+        return files, filenames
 
     def show_img(self,img=int):
         cv2.imshow("the image",self.files[img])
@@ -83,7 +85,7 @@ class PEAClass:
             box = np.int0(cv2.boxPoints(rect))
             new_img = cv2.drawContours(img0,[box],0,(0,0,255),2)
         stacked_img = np.concatenate((self.files[img],new_img),axis=1)
-        cv2.imshow("Original PEA left, ROI detected right",stacked_img)
+        cv2.imshow("Original left, ROI detected right file:{0}".format(self.filenames[img]),stacked_img)
         return stacked_img
 
     def loop_through_all_img(self,max_idx_range=10,save_img=False,use_L_or_A="L"):
@@ -96,5 +98,5 @@ class PEAClass:
                 max_list, max_idx = self.contour_to_A(contours, max_idx_range)
             stacked_img = self.mark_ROI_from_contour_A(contours, max_idx, img=i)
             if save_img:
-                cv2.imwrite(("PEA/treated/treated_img_%s" % i + ".png"), stacked_img)
+                cv2.imwrite(("Raman/herys_tirf/treated/"+"{0}_treated.jpg".format(os.path.splitext(self.filenames[i])[0])), stacked_img)
             cv2.waitKey(0)

@@ -1,14 +1,12 @@
 from bin import mainClass
+from bin import avg_by_kernel
 
 path_hery = "C:\\Users\lukas\PycharmProjects\Raman-img-homo-recog\Raman\Visible"
 path_PEA = "C:\\Users\lukas\PycharmProjects\Raman-img-homo-recog\data\PEA\img"
 path_hery_raw = "C:\\Users\lukas\PycharmProjects\Raman-img-homo-recog\Raman\Herys Tirf"
 
-obj = mainClass.Main(path_hery_raw)
-
-obj.extract_all_img_homogeneity(rem_outliers=True)
-
-
+obj = avg_by_kernel.PixelAvg(path_hery_raw)
+obj.average_all_files()
 
 
 """
