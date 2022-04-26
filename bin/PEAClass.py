@@ -72,7 +72,6 @@ class Main:
             A_list.pop(idx[0])
         return max_list, np.array(max_idx).ravel()
 
-
     def mark_ROI_from_contour_A(self,contours,idx_list,img=int):
         img0 = np.copy(self.files[img])
         for i in range(len(idx_list)):
@@ -95,7 +94,10 @@ class Main:
             stacked_img = self.mark_ROI_from_contour_A(contours, max_idx, img=i)
             if save_img:
                 if os.path.exists(self.path+"/treated"):
-                    cv2.imwrite(self.path+"/treated/{0}_treated.jpg".format(os.path.splitext(self.filenames[i])[0]), stacked_img)
+                    cv2.imwrite(self.path+"/treated/{0}_treated.jpg".format(os.path.splitext(self.filenames[i])[0]),
+                                stacked_img)
                 else:
                     os.mkdir(self.path+"/treated")
+                    cv2.imwrite(self.path + "/treated/{0}_treated.jpg".format(os.path.splitext(self.filenames[i])[0]),
+                                stacked_img)
             cv2.waitKey(0)
