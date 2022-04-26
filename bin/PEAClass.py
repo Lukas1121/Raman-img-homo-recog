@@ -1,25 +1,21 @@
 import cv2
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
 import numpy as np
-from scipy import stats
 import os
 import glob
-import sys
-sys.path.append("External_Functions")
-from ExternalFunctions import nice_string_output, add_text_to_ax
 
-class PEAClass:
-    def __init__(self,path,kernel = 3):
+class Main:
+    def __init__(self,path,kernel = None):
         self.files,self.filenames = self.unpack_files(path)
         self.kernel = kernel
+        self.path = path
 
     def unpack_files(self, path):
         files = []
         filenames = []
         for f in glob.glob(path + "/*"):
-            files.append(cv2.imread(f)[0:-(60),(60):-1])
-            filenames.append(os.path.basename(f))
+            if os.path.isdir(f) == False:
+                files.append(cv2.imread(f)[0:-(1),(0):-1])
+                filenames.append(os.path.basename(f))
         return files, filenames
 
     def show_img(self,img=int):
@@ -37,7 +33,7 @@ class PEAClass:
 
     def find_countours(self,img=int,show_img=False):
         gray_img = cv2.cvtColor(self.files[img],cv2.COLOR_BGR2GRAY)
-        blur = cv2.medianBlur(gray_img,5)
+        blur = cv2.medianBlur(gray_img,7)
         canny = cv2.Canny(blur,0,150)
         contours, _ = cv2.findContours(canny,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
         # cv2.imshow("Original image untreated", self.files[img])
@@ -98,5 +94,8 @@ class PEAClass:
                 max_list, max_idx = self.contour_to_A(contours, max_idx_range)
             stacked_img = self.mark_ROI_from_contour_A(contours, max_idx, img=i)
             if save_img:
-                cv2.imwrite(("Raman/herys_tirf/treated/"+"{0}_treated.jpg".format(os.path.splitext(self.filenames[i])[0])), stacked_img)
+                if os.path.exists(self.path+"/treated"):
+                    cv2.imwrite(self.path+"/treated/{0}_treated.jpg".format(os.path.splitext(self.filenames[i])[0]), stacked_img)
+                else:
+                    os.mkdir(self.path+"/treated")
             cv2.waitKey(0)
